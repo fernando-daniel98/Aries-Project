@@ -6,7 +6,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 
-# Importações dos módulos de páginas
 from modules.visao_geral import render as render_visao_geral
 from modules.analise_temporal import render as render_analise_temporal
 from modules.analise_geografica import render as render_analise_geografica
@@ -15,7 +14,6 @@ from modules.analise_custos import render as render_analise_custos
 from modules.analise_desfechos import render as render_analise_desfechos
 from modules.consultas_doenca import render as render_consultas_doenca
 
-# Configuração da página
 st.set_page_config(
     page_title="Dashboard SIH/SUS", 
     page_icon="🏥", 
@@ -23,12 +21,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Função para carregar os dados
 @st.cache_data
 def carregar_dados():
     """
-    Carrega os dados processados do SIH de arquivos CSV.
-    Utiliza cache para melhor performance.
+    Carrega os dados processados do SIH de arquivos CSV. 
+    Futuramente, será adaptado para carregar de um banco de dados. 
+    Utiliza cache para melhor performance. 
     """
     base_dir = r'c:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH'
     
@@ -55,22 +53,15 @@ def carregar_dados():
     }
 
 
-# Função principal que constrói a interface do dashboard
 def main():
-    # Título principal
     st.title("Dashboard de Análise de Internações SUS")
-    
-    # O streamlit permite utilizar markdown para formatar o texto e ajustar as páginas
     st.markdown("### Modelo Dimensional OLAP para dados do SIH/SUS")
     
-    # Carregar dados
     with st.spinner('Carregando dados...'):
         data = carregar_dados()
     
-    # Barra lateral para configurações
     st.sidebar.header("Configurações")
     
-    # Menu de navegação
     menu = st.sidebar.radio(
         "Selecione a análise:",
         ["Visão Geral", "Análise Temporal", "Análise Geográfica", 
@@ -137,6 +128,5 @@ def main():
     elif menu == "Consulta por Doença Específica":
         render_consultas_doenca(data)
 
-# Executar a aplicação
 if __name__ == '__main__':
     main()

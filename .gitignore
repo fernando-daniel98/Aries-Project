@@ -10,6 +10,12 @@ Dict v1.ods
 
 *.bat
 
-Notebooks/Aprendendo
-Notebooks/Teste-Fato_Hospital
-Notebooks/testes
+/Notebooks/Aprendendo
+/Notebooks/Teste-Fato_Hospital
+/Notebooks/testes
+
+# Ignorar arquivos de cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+

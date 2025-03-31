@@ -3,30 +3,25 @@ import pandas as pd
 import plotly.express as px
 
 def render(data):
-    """Análise de Diagnósticos - Versão Corrigida"""
     st.header("📊 Análise de Diagnósticos", divider='rainbow')
     
-    # ===== [Sidebar] =====
     with st.sidebar:
         st.subheader("⚙️ Filtros")
         
-        # Filtro de ano único para simplificar
         ano_selecionado = st.selectbox(
             "Selecione o ano:",
             sorted(data['dim_tempo']['ANO_CMPT'].unique()),
             index=0
         )
     
-    # ===== [Processamento] =====
     # Filtrar e mesclar dados com tratamento de duplicatas
     df = (
         data['fato']
         .merge(data['dim_tempo'][data['dim_tempo']['ANO_CMPT'] == ano_selecionado], on='ID_TEMPO')
         .merge(data['dim_diagnostico'], on='ID_DIAGNOSTICO')
-        .drop_duplicates(subset=['N_AIH', 'DIAG_PRINC'])  # Chave única por internação-diagnóstico
+        .drop_duplicates(subset=['N_AIH', 'DIAG_PRINC'])
     )
     
-    # ===== [Análise Principal] =====
     st.subheader("🔍 Diagnósticos Mais Frequentes")
     
     # Contagem única por internação
@@ -36,11 +31,9 @@ def render(data):
         mortalidade=('MORTE', 'mean')
     ).reset_index().sort_values('internacoes', ascending=False)
     
-    # Seleção de top N
     top_n = st.slider("Quantidade de diagnósticos a exibir:", 5, 50, 10)
     df_top = diagnosticos.head(top_n)
     
-    # Gráfico corrigido
     fig = px.bar(
         df_top,
         x='DIAG_PRINC',
@@ -51,7 +44,6 @@ def render(data):
     )
     st.plotly_chart(fig, use_container_width=True)
     
-    # ===== [Análise Detalhada] =====
     st.subheader("📈 Detalhes por Diagnóstico")
     
     if not df_top.empty:

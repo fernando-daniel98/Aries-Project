@@ -3,28 +3,21 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Reimplementação das funções necessárias para usar os nomes de colunas corretos
 def analise_temporal(fato, dim_tempo):
     """
     Gera gráfico de análise temporal das internações.
-    
-    Adaptado para usar N_AIH em vez de ID_INTERNACAO.
     """
-    # Juntar com dimensão tempo
     df_analise = fato.merge(dim_tempo, on='ID_TEMPO')
     
-    # Agrupar por ano e mês
     df_tempo = df_analise.groupby(['ANO_CMPT', 'MES_CMPT']).agg(
-        total_internacoes=('N_AIH', 'count')  # Modificado para usar N_AIH
+        total_internacoes=('N_AIH', 'count')
     ).reset_index()
     
-    # Criar coluna de data para visualização
     df_tempo['data'] = pd.to_datetime(
         df_tempo['ANO_CMPT'].astype(str) + '-' + 
         df_tempo['MES_CMPT'].astype(str) + '-01'
     )
     
-    # Gráfico de linha temporal
     fig = px.line(
         df_tempo.sort_values('data'),
         x='data',
@@ -39,34 +32,26 @@ def analise_temporal(fato, dim_tempo):
 def analise_desfechos(fato, dim_paciente):
     """
     Gera gráfico de análise de desfechos por faixa etária.
-    
-    Adaptado para usar N_AIH em vez de ID_INTERNACAO e o esquema correto de faixa etária.
     """
-    # Juntar com dimensão paciente
     df_analise = fato.merge(dim_paciente, on='ID_PACIENTE')
     
-    # Agrupar por faixa etária
     df_desfechos = df_analise.groupby('FAIXA_ETARIA').agg(
-        total_internacoes=('N_AIH', 'count'),  # Modificado para usar N_AIH
+        total_internacoes=('N_AIH', 'count'),
         taxa_mortalidade=('MORTE', 'mean')
     ).reset_index()
     
-    # Converter taxa para percentual
     df_desfechos['taxa_mortalidade'] = df_desfechos['taxa_mortalidade'] * 100
     
-    # Ordenar faixas etárias corretamente
     ordem_faixas = ['< 1 ano', '1-4 anos', '5-11 anos', '12-17 anos', '18-29 anos', '30-59 anos', '60-79 anos', '≥ 80 anos']
-    # Filtrar apenas faixas existentes nos dados
     faixas_existentes = [faixa for faixa in ordem_faixas if faixa in df_desfechos['FAIXA_ETARIA'].unique()]
     
-    # Gráfico de barras
     fig = px.bar(
         df_desfechos,
         x='FAIXA_ETARIA',
         y='taxa_mortalidade',
         title='Taxa de mortalidade por faixa etária',
         labels={'FAIXA_ETARIA': 'Faixa Etária', 'taxa_mortalidade': 'Taxa de Mortalidade (%)'},
-        category_orders={'FAIXA_ETARIA': faixas_existentes}  # Ordenar faixas
+        category_orders={'FAIXA_ETARIA': faixas_existentes}
     )
     
     return fig
@@ -74,24 +59,17 @@ def analise_desfechos(fato, dim_paciente):
 def analise_diagnosticos(fato, dim_diagnostico):
     """
     Gera gráfico dos diagnósticos mais frequentes.
-    
-    Adaptado para usar N_AIH em vez de ID_INTERNACAO e DIAG_PRINC para o CID.
     """
-    # Juntar com dimensão diagnóstico
     df_analise = fato.merge(dim_diagnostico, on='ID_DIAGNOSTICO')
     
-    # Extrair categoria do CID (primeiros 3 caracteres)
     df_analise['CATEGORIA_CID'] = df_analise['DIAG_PRINC'].str[:3]
     
-    # Agrupar por categoria
     df_diag = df_analise.groupby('CATEGORIA_CID').agg(
-        total_internacoes=('N_AIH', 'count')  # Modificado para usar N_AIH
+        total_internacoes=('N_AIH', 'count')
     ).reset_index()
     
-    # Top 10 diagnósticos
     top_diags = df_diag.sort_values('total_internacoes', ascending=False).head(10)
     
-    # Gráfico de barras horizontais
     fig = px.bar(
         top_diags,
         y='CATEGORIA_CID',
@@ -112,24 +90,19 @@ def render(data):
     """
     st.header("Visão Geral dos Dados")
     
-    # Distribuir alguns gráficos na página
     col1, col2 = st.columns(2)
     
     with col1:
-        # Gráfico temporal simplificado
         fig_temporal = analise_temporal(data['fato'], data['dim_tempo'])
         st.plotly_chart(fig_temporal, use_container_width=True)
     
     with col2:
-        # Gráfico de desfechos
         fig_desfechos = analise_desfechos(data['fato'], data['dim_paciente'])
         st.plotly_chart(fig_desfechos, use_container_width=True)
         
-    # Gráfico de diagnósticos
     fig_diag = analise_diagnosticos(data['fato'], data['dim_diagnostico'])
     st.plotly_chart(fig_diag, use_container_width=True)
     
-    # Exibir algumas informações de contexto
     st.markdown("""
     ### Sobre os dados
     
@@ -140,7 +113,6 @@ def render(data):
     Use o menu lateral para navegar entre diferentes análises.
     """)
     
-    # Mostrar informações sobre as dimensões disponíveis
     with st.expander("Dimensões disponíveis para análise"):
         col1, col2 = st.columns(2)
         
