@@ -1,3 +1,4 @@
+
 from sqlalchemy import create_engine
 
 def conecting_database(user, password, host, port, data_base):
@@ -19,3 +20,4 @@ def conecting_database(user, password, host, port, data_base):
 def desconecting_database(connection):
     connection.close()
     print("Conexão fechada!")
+
