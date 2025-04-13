@@ -28,7 +28,7 @@ def carregar_dados():
     Futuramente, será adaptado para carregar de um banco de dados. 
     Utiliza cache para melhor performance. 
     """
-    base_dir = r'c:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH'
+    base_dir = r'C:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH\Teste'
     
     fato = pd.read_csv(f'{base_dir}/fato_internacao.csv', sep=';')
     dim_tempo = pd.read_csv(f'{base_dir}/dim_tempo.csv', sep=';')
