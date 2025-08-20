@@ -8,7 +8,7 @@ from datetime import datetime
 
 from modules.visao_geral import render as render_visao_geral
 from modules.analise_temporal import render as render_analise_temporal
-from modules.analise_geografica import render as render_analise_geografica
+from modules.analise_geografica_copy import render as render_analise_geografica
 from modules.analise_diagnosticos import render as render_analise_diagnosticos
 from modules.analise_custos import render as render_analise_custos
 from modules.analise_desfechos import render as render_analise_desfechos
@@ -28,7 +28,12 @@ def carregar_dados():
     Futuramente, será adaptado para carregar de um banco de dados. 
     Utiliza cache para melhor performance. 
     """
-    base_dir = r'c:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH'
+    
+    # Teste com arquivos de uma mesmo ano
+    # base_dir = r'C:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH\Teste'
+    
+    # Teste com um arquivo que contém 200 internações em cada mês (fevereiro)
+    base_dir = r'C:\Users\Fernando\Documents\CEPID - Projeto ARIES\Aries-Project\data\processados\SIH'
     
     fato = pd.read_csv(f'{base_dir}/fato_internacao.csv', sep=';')
     dim_tempo = pd.read_csv(f'{base_dir}/dim_tempo.csv', sep=';')

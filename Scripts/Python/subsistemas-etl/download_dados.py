@@ -1,9 +1,6 @@
-
 from pysus.ftp.databases.sih import SIH
 import pandas as pd
 
-# Função que recebe um grupo, uma uf, um ano, um 
-# mês e um path e retorna uma lista de arquivos baixados em parquet
 def downloadDadosSIHSUSparquet(grupo, uf, ano, mes, path):
     sih = SIH().load()
     
@@ -13,7 +10,6 @@ def downloadDadosSIHSUSparquet(grupo, uf, ano, mes, path):
     
     return downloads
 
-# Função que recebe uma lista de parquet e retorna uma lista de DataFrames
 def downloadDadosSIHSUScsv(downloadParquet, path):
     dfs = []
     

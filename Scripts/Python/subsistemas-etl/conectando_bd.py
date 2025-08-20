@@ -1,4 +1,3 @@
-
 from sqlalchemy import create_engine
 
 def conecting_database(user, password, host, port, data_base):
@@ -11,7 +10,7 @@ def conecting_database(user, password, host, port, data_base):
     # Teste a conexão
     try:
         connection = engine.connect()
-        print("Conexão bem-sucedida!")
+        print("Conexao bem-sucedida!")
     except Exception as e:
         print(f"Erro ao conectar: {e}")
         return None
@@ -19,5 +18,5 @@ def conecting_database(user, password, host, port, data_base):
 
 def desconecting_database(connection):
     connection.close()
-    print("Conexão fechada!")
+    print("Conexao fechada!")
 

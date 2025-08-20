@@ -1,5 +1,3 @@
-import time
-import schedule
 import pandas as pd
 from sqlalchemy import create_engine
 from datetime import datetime
@@ -31,33 +29,33 @@ UF = 'SP'
 ANO, MES = obter_periodo_atual()
 STAGE_PATH = "data/brutos/SIH/parquet"
 
-# Função para extrair e carregar os dados no stage
 def extract_and_load():
-    print(f"Baixando dados para: Ano {ANO}, Mês {MES}")
+    print(f"Baixando dados para: Ano {ANO}, Mes {MES}")
     
     caminho_atual = f"{STAGE_PATH}\\{ANO[0]}"
     
     engine = conecting_database(USER, PASSWORD, HOST, PORT, DATABASE)
     if engine is None:
-        print("Falha na conexão com o banco.")
-        return
+        print("Falha na conexao com o banco.")
+        return False
 
-    download_parquet_files = downloadDadosSIHSUSparquet(GRUPO, 
-        UF, ANO, MES, caminho_atual)
-    
-    df = download_parquet_files.to_dataframe()
+    try:
+        download_parquet_files = downloadDadosSIHSUSparquet(GRUPO, 
+            UF, ANO, MES, caminho_atual)
         
-    df.to_sql("stage_sihsus", engine, if_exists="append", 
-        index=False, method="multi", chunksize=10000)
+        df = download_parquet_files.to_dataframe()
+            
+        df.to_sql("stage_sihsus", engine, if_exists="append", 
+            index=False, method="multi", chunksize=10000)
 
-    desconecting_database(engine)
-    print("Processo concluído!")
+        print("Extracao concluida com sucesso!")
+        return True
+    except Exception as e:
+        print(f"Erro durante a extracao: {e}")
+        return False
+    finally:
+        desconecting_database(engine)
 
-# Agendar a execução automática a cada X unidades de tempo.
-schedule.every().minute.do(extract_and_load)
-
-while True:
-    schedule.run_pending()
-    
-    # Checa a cada 1 minuto
-    time.sleep(60)  
+# Execução direta (quando o script é executado diretamente)
+if __name__ == "__main__":
+    extract_and_load()
