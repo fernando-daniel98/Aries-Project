@@ -55,6 +55,8 @@ def render(data):
     
     # Extrair anos disponíveis de forma segura
     try:
+        
+        # anos_disponiveis = list(range(2014, 2026))
         anos_disponiveis = sorted(data['dim_tempo']['ANO_CMPT'].unique())
         
         # Verificar se há anos disponíveis
